@@ -1,0 +1,125 @@
+:root {
+  --bg: #0f0f1a;
+  --panel: #1a1a2e;
+  --border: #2a2a4a;
+  --text: #e0e0ff;
+  --text-dim: #6060a0;
+  --accent: #7f5af0;
+
+  --color-1: #00f5ff; /* I - cyan */
+  --color-2: #ffe600; /* O - yellow */
+  --color-3: #bf00ff; /* T - purple */
+  --color-4: #00e400; /* S - green */
+  --color-5: #ff2400; /* Z - red */
+  --color-6: #0040ff; /* J - blue */
+  --color-7: #ff8c00; /* L - orange */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Courier New', monospace;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+#container {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+canvas#canvas {
+  display: block;
+  border: 2px solid var(--border);
+  box-shadow: 0 0 30px rgba(127, 90, 240, 0.3);
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Sidebars */
+#sidebar-left,
+#sidebar-right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 120px;
+  padding-top: 4px;
+}
+
+h1 {
+  font-size: 22px;
+  letter-spacing: 4px;
+  color: var(--accent);
+  text-shadow: 0 0 12px var(--accent);
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.stat-box {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 10px 12px;
+}
+
+.stat-label {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-size: 22px;
+  font-weight: bold;
+  color: var(--text);
+}
+
+/* Next piece canvas */
+#next-canvas {
+  display: block;
+  margin-top: 8px;
+}
+
+/* Controls */
+#controls {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 10px 12px;
+  font-size: 11px;
+}
+
+.control-title {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+
+.control-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+  color: var(--text-dim);
+}
+
+.key {
+  background: var(--border);
+  color: var(--text);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 10px;
+  margin-right: 6px;
+}
