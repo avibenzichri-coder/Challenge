@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git commit:*)",
+      "Bash(git config:*)",
+      "Bash(pdftotext \"c:/Projects/Challenge/משימת מתמטיקה ז2 15.3.26.docx.pdf\" -)",
+      "Bash(pdftotext \"c:/Projects/Challenge/ציר המספרים.pdf\" -)",
+      "Bash(pdftotext \"משימת מתמטיקה ז2 15.3.26.docx.pdf\" -)",
+      "Bash(powershell -Command \":*)",
+      "Bash(powershell -Command \"Get-ChildItem ''c:/Projects/Challenge/'' | ForEach-Object { Write-Host $_.Name }\")",
+      "Bash(python3 -c \"import sys; print\\(sys.version\\)\")",
+      "Bash(python -c \"import sys; print\\(sys.version\\)\")",
+      "Bash(python -c \"import pypdf; print\\(''pypdf ok''\\)\")",
+      "Bash(python -c \"import PyPDF2; print\\(''pypdf2 ok''\\)\")",
+      "Bash(python -c \"import pdfminer; print\\(''pdfminer ok''\\)\")",
+      "Bash(python -c \"import fitz; print\\(''fitz ok''\\)\")",
+      "Bash(pip install:*)",
+      "Bash(npx skills:*)",
+      "Bash(npm --version)",
+      "Bash(cmd.exe /c \"node --version && npm --version && npx --version\")",
+      "Bash(cmd.exe /c \"where node\")",
+      "Bash(cmd.exe /c \"where npx\")",
+      "Bash(cmd.exe /c \"where node 2>nul & where npx 2>nul & echo done\")",
+      "Bash(/c/Users/avibe/AppData/Roaming/nvm/current/npx --version)",
+      "Read(//c/Users/avibe/AppData/Roaming/**)"
+    ]
+  }
+}

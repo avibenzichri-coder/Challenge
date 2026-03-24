@@ -1,0 +1,383 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - img
+  - generic [ref=e2]:
+    - generic:
+      - generic:
+        - generic: מתמטיקה · כיתה ז׳
+        - heading "מערכת הצירים" [level=1]:
+          - text: מערכת
+          - text: הצירים
+        - generic: גלו את שפת המיקום המתמטי
+        - generic:
+          - generic: ציר X
+          - generic: ציר Y
+          - generic: קואורדינטות
+          - generic: ארבעה רבעים
+          - generic: שיקוף
+      - img
+    - generic [ref=e3]:
+      - heading "מה זה מערכת צירים?" [level=2] [ref=e4]
+      - generic [ref=e5]:
+        - generic [ref=e6]:
+          - generic [ref=e7]:
+            - heading "📍 הרעיון" [level=3] [ref=e8]
+            - paragraph [ref=e9]: מערכת צירים היא דרך מתמטית לתאר מיקום של נקודות על מישור — כמו GPS מתמטי!
+          - generic [ref=e10]:
+            - heading "➡️ ציר X — אופקי" [level=3] [ref=e11]
+            - paragraph [ref=e12]: ימינה = חיובי (+) | שמאלה = שלילי (−)
+          - generic [ref=e13]:
+            - heading "⬆️ ציר Y — אנכי" [level=3] [ref=e14]
+            - paragraph [ref=e15]: למעלה = חיובי (+) | למטה = שלילי (−)
+          - generic [ref=e16]:
+            - text: 📌
+            - strong [ref=e17]: "נקודת הראשית:"
+            - text: מקום המפגש של שני הצירים — (0, 0)
+        - img [ref=e18]:
+          - generic [ref=e20]: X
+          - generic [ref=e22]: "Y"
+          - generic [ref=e23]: "0"
+          - generic [ref=e24]: "-5"
+          - generic [ref=e25]: "-5"
+          - generic [ref=e26]: "-4"
+          - generic [ref=e27]: "-4"
+          - generic [ref=e28]: "-3"
+          - generic [ref=e29]: "-3"
+          - generic [ref=e30]: "-2"
+          - generic [ref=e31]: "-2"
+          - generic [ref=e32]: "-1"
+          - generic [ref=e33]: "-1"
+          - generic [ref=e34]: "1"
+          - generic [ref=e35]: "1"
+          - generic [ref=e36]: "2"
+          - generic [ref=e37]: "2"
+          - generic [ref=e38]: "3"
+          - generic [ref=e39]: "3"
+          - generic [ref=e40]: "4"
+          - generic [ref=e41]: "4"
+          - generic [ref=e42]: "5"
+          - generic [ref=e43]: "5"
+          - generic [ref=e46]: (0,0)
+    - generic:
+      - heading "איך קוראים נקודה?" [level=2]
+      - generic:
+        - generic:
+          - generic:
+            - heading "🎯 נקודה A(4, 3)" [level=3]
+            - paragraph:
+              - text: כל נקודה = זוג מספרים (x, y)
+              - text: המספר הראשון הוא X, השני הוא Y
+          - generic:
+            - button "→ אחורה" [disabled]
+            - button "קדימה ←"
+        - img
+    - generic:
+      - heading "ארבעת הרבעים" [level=2]
+      - generic:
+        - generic:
+          - generic:
+            - generic:
+              - generic: רבע II
+              - generic: (−, +)
+              - generic: X שלילי, Y חיובי
+            - generic:
+              - generic: רבע I
+              - generic: (+, +)
+              - generic: X חיובי, Y חיובי
+            - generic:
+              - generic: רבע III
+              - generic: (−, −)
+              - generic: X שלילי, Y שלילי
+            - generic:
+              - generic: רבע IV
+              - generic: (+, −)
+              - generic: X חיובי, Y שלילי
+          - generic:
+            - text: 💡
+            - strong: "טריק:"
+            - text: כמו מפה — ימין = X חיובי, מעלה = Y חיובי
+        - img
+    - generic:
+      - heading "דוגמה 1 — נקודה בודדת" [level=2]
+      - generic:
+        - generic:
+          - generic:
+            - 'heading "🎯 נתון: A(3, 2)" [level=3]'
+            - paragraph: איך נסמן את הנקודה A(3, 2)?
+          - generic:
+            - strong: "צעד 1:"
+            - text: X = 3 → זוז 3 ימינה
+          - generic:
+            - strong: "צעד 2:"
+            - text: Y = 2 → זוז 2 למעלה
+          - generic:
+            - heading "✅ תשובה" [level=3]
+            - paragraph: A(3,2) ברבע הראשון — X חיובי וגם Y חיובי
+        - img
+    - generic:
+      - heading "דוגמה 2 — כמה נקודות" [level=2]
+      - generic:
+        - generic:
+          - generic:
+            - heading "🔵 B(−2, 4)" [level=3]
+            - paragraph:
+              - text: X = −2 (שמאלה), Y = 4 (למעלה)
+              - text: רבע שני — (−, +)
+          - generic:
+            - heading "🔴 C(1, −3)" [level=3]
+            - paragraph:
+              - text: X = 1 (ימינה), Y = −3 (למטה)
+              - text: רבע רביעי — (+, −)
+          - generic:
+            - text: 💡
+            - strong: הסימן קובע את הרבע!
+            - text: בדוק תמיד את סימני X ו-Y
+        - img
+    - generic:
+      - heading "דוגמה 3 — שיקוף" [level=2]
+      - generic:
+        - generic:
+          - generic:
+            - 'heading "🌟 נתון: D(3, −2)" [level=3]'
+            - paragraph: מצא שיקוף דרך כל אחד מהצירים
+          - generic:
+            - heading "📌 שיקוף דרך ציר Y" [level=3]
+            - paragraph: "X מקבל סימן הפוך: D′(−3, −2)"
+          - generic:
+            - heading "📌 שיקוף דרך ציר X" [level=3]
+            - paragraph: "Y מקבל סימן הפוך: D″(3, 2)"
+          - generic:
+            - text: 💡 שיקוף =
+            - strong: החלפת סימן
+            - text: של קואורדינטה אחת
+        - img
+    - generic:
+      - heading "תרגיל 1 — סמן נקודות על הגריד" [level=2]
+      - generic:
+        - generic:
+          - generic:
+            - heading "סמן את הנקודות:" [level=3]
+            - list:
+              - listitem: P(2, 3)
+              - listitem: Q(−1, 4)
+              - listitem: R(−3, −2)
+              - listitem: S(4, −1)
+          - generic: לחץ על הגריד לסימון P
+          - generic:
+            - generic:
+              - img:
+                - generic: "30"
+              - generic: שניות לחשיבה
+            - button "✓ בדוק תשובה"
+        - img
+    - generic:
+      - heading "תרגיל 2 — זיהוי רבעים" [level=2]
+      - generic:
+        - generic: לחץ על הרבע שבו נמצאת כל נקודה
+        - generic:
+          - generic:
+            - generic: A(−3, 5)
+            - generic:
+              - button "I"
+              - button "II"
+              - button "III"
+              - button "IV"
+          - generic:
+            - generic: B(2, −4)
+            - generic:
+              - button "I"
+              - button "II"
+              - button "III"
+              - button "IV"
+          - generic:
+            - generic: C(−1, −6)
+            - generic:
+              - button "I"
+              - button "II"
+              - button "III"
+              - button "IV"
+          - generic:
+            - generic: D(7, 3)
+            - generic:
+              - button "I"
+              - button "II"
+              - button "III"
+              - button "IV"
+        - generic:
+          - generic:
+            - generic:
+              - img:
+                - generic: "30"
+              - generic: שניות לחשיבה
+            - button "✓ בדוק תשובה"
+    - generic:
+      - heading "תרגיל 3 — קרא קואורדינטות" [level=2]
+      - generic:
+        - generic:
+          - generic: הסתכל על הגריד והכנס קואורדינטות
+          - generic:
+            - generic:
+              - generic: E
+              - generic: (
+              - spinbutton
+              - generic: ","
+              - spinbutton
+              - generic: )
+            - generic:
+              - generic: F
+              - generic: (
+              - spinbutton
+              - generic: ","
+              - spinbutton
+              - generic: )
+            - generic:
+              - generic: G
+              - generic: (
+              - spinbutton
+              - generic: ","
+              - spinbutton
+              - generic: )
+            - generic:
+              - generic: H
+              - generic: (
+              - spinbutton
+              - generic: ","
+              - spinbutton
+              - generic: )
+          - generic:
+            - generic:
+              - generic:
+                - img:
+                  - generic: "30"
+                - generic: שניות לחשיבה
+              - button "✓ בדוק תשובה"
+        - img
+    - generic:
+      - heading "תרגיל 4 — שיקוף נקודה" [level=2]
+      - generic:
+        - generic:
+          - generic:
+            - 'heading "נתון: K(3, 4)" [level=3]'
+            - paragraph: "מצא את שיקופי הנקודה:"
+            - generic:
+              - generic: א. שיקוף דרך ציר Y
+            - generic:
+              - generic: K′ (
+              - spinbutton
+              - generic: ","
+              - spinbutton
+              - generic: )
+            - generic:
+              - generic: ב. שיקוף דרך ציר X
+            - generic:
+              - generic: K″ (
+              - spinbutton
+              - generic: ","
+              - spinbutton
+              - generic: )
+          - generic: "זכור: שיקוף = שינוי סימן של קואורדינטה אחת"
+          - generic:
+            - generic:
+              - generic:
+                - img:
+                  - generic: "30"
+                - generic: שניות לחשיבה
+              - button "✓ בדוק תשובה"
+        - img
+    - generic:
+      - heading "תרגיל 5 — על הציר?" [level=2]
+      - generic:
+        - generic: "לכל נקודה, בחר: ציר X / ציר Y / לא על ציר"
+        - generic:
+          - generic:
+            - generic: A(3, 0)
+            - generic:
+              - button "ציר X"
+              - button "ציר Y"
+              - button "לא על ציר"
+          - generic:
+            - generic: B(0, −2)
+            - generic:
+              - button "ציר X"
+              - button "ציר Y"
+              - button "לא על ציר"
+          - generic:
+            - generic: C(−1, 4)
+            - generic:
+              - button "ציר X"
+              - button "ציר Y"
+              - button "לא על ציר"
+          - generic:
+            - generic: D(−4, 0)
+            - generic:
+              - button "ציר X"
+              - button "ציר Y"
+              - button "לא על ציר"
+          - generic:
+            - generic: E(0, 7)
+            - generic:
+              - button "ציר X"
+              - button "ציר Y"
+              - button "לא על ציר"
+        - generic:
+          - generic:
+            - generic:
+              - img:
+                - generic: "30"
+              - generic: שניות לחשיבה
+            - button "✓ בדוק תשובה"
+    - generic:
+      - heading "תרגיל 6 — קודקוד חסר" [level=2]
+      - generic:
+        - generic:
+          - generic:
+            - heading "מלבן עם קודקוד חסר" [level=3]
+            - paragraph:
+              - text: "שלושה קודקודים של מלבן:"
+              - text: A(1, 2), B(4, 2), C(4, 5)
+            - paragraph: מהו הקודקוד הרביעי D?
+          - generic: לחץ על הגריד כדי לסמן את D
+          - generic:
+            - generic:
+              - generic:
+                - img:
+                  - generic: "30"
+                - generic: שניות לחשיבה
+              - button "✓ בדוק תשובה"
+        - img
+    - generic:
+      - heading "סיכום — מה למדנו?" [level=2]
+      - generic:
+        - generic:
+          - generic: ⊕
+          - heading "מערכת צירים" [level=3]
+          - paragraph: שני צירים מאונכים — X אופקי, Y אנכי — נפגשים בנקודת הראשית (0,0)
+        - generic:
+          - generic: 📍
+          - heading "קריאת נקודה" [level=3]
+          - paragraph: כותבים (x, y) — X קודם, Y שני. X = ימינה/שמאלה, Y = למעלה/למטה
+        - generic:
+          - generic: 🗺️
+          - heading "ארבעת הרבעים" [level=3]
+          - paragraph:
+            - text: I(+,+) · II(−,+) · III(−,−) · IV(+,−)
+            - text: הסימן של X ו-Y קובע את הרבע
+        - generic:
+          - generic: 🪞
+          - heading "שיקוף" [level=3]
+          - paragraph:
+            - text: דרך ציר Y → שנה סימן X
+            - text: דרך ציר X → שנה סימן Y
+      - generic:
+        - generic: 🎉 כל הכבוד!
+        - paragraph: אתם מכירים עכשיו את מערכת הצירים המתמטית
+        - generic:
+          - button "🔄 התחל מחדש"
+          - button "✓ סיום"
+  - generic [ref=e47]:
+    - button "הקודם ›" [ref=e48] [cursor=pointer]
+    - generic [ref=e49]: 2 / 14
+    - button "‹ הבא" [ref=e50] [cursor=pointer]
+```
