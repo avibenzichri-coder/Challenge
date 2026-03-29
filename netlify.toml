@@ -1,0 +1,3 @@
+[build]
+  publish = "flower-id"
+  functions = "netlify/functions"
