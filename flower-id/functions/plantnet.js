@@ -54,7 +54,11 @@ exports.handler = async function (event) {
       url += `&lat=${latitude}&lon=${longitude}`;
     }
 
-    const response = await fetch(url, { method: 'POST', body: fd });
+    const response = await fetch(url, {
+      method: 'POST',
+      body: fd,
+      headers: { 'Origin': 'https://radiant-torte-5008bf.netlify.app' },
+    });
     const responseBody = await response.text();
 
     return {
