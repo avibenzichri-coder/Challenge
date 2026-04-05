@@ -312,7 +312,7 @@ async function fetchKKLByHebrewName(hebrewName) {
   if (CACHE.has(cacheKey)) return CACHE.get(cacheKey);
 
   try {
-    const url  = `${KKL_FUNCTION}?name=${encodeURIComponent(hebrewName)}${DEBUG_MODE ? '&debug=1' : ''}`;
+    const url  = `${KKL_FUNCTION}?name=${encodeURIComponent(hebrewName)}`;
     if (DEBUG_MODE) console.log('🌿 KKL by Hebrew name:', url);
     const resp = await fetchWithTimeout(url, {}, 10000);
     if (!resp.ok) { CACHE.set(cacheKey, null); return null; }
@@ -569,6 +569,15 @@ async function resolveAndRender(sciName, familySci, score, apiImageURL, prefetch
       speciesWikiUrl = wikiSearch.url;
       if (!hebrewName || isGenusLevel) { hebrewName = wikiSearch.title; isGenusLevel = false; }
       if (!wikiSummary) wikiSummary = wikiSearch.extract;
+    }
+  }
+
+  // Try fetching Wikipedia summary by Hebrew name directly (handles redirects, e.g. "חלמית גדולה" → "חלמית")
+  if (!wikiSummary && hebrewName && !isGenusLevel) {
+    const heNameWiki = await callWikipediaHE(hebrewName);
+    if (heNameWiki?.extract) {
+      wikiSummary = heNameWiki.extract;
+      if (!speciesWikiUrl) speciesWikiUrl = heNameWiki.url;
     }
   }
 
