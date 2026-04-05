@@ -49,11 +49,7 @@ exports.handler = async function (event) {
     // Build URL with API key
     const url = `${PLANTNET_URL}?lang=he&api-key=${apiKey}`;
 
-    const response = await fetch(url, {
-      method: 'POST',
-      body: fd,
-      headers: { 'Origin': 'https://radiant-torte-5008bf.netlify.app' },
-    });
+    const response = await fetch(url, { method: 'POST', body: fd });
     const responseBody = await response.text();
 
     return {
