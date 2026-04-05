@@ -1,7 +1,12 @@
 [build]
   publish = "flower-id"
   functions = "flower-id/functions"
+  base = "."
 
 [build.environment]
   NODE_VERSION = "18"
   AWS_LAMBDA_JS_RUNTIME = "nodejs18.x"
+  NETLIFY_BUILD_IMAGE = "noble"
+
+[functions]
+  node_bundler = "esbuild"
