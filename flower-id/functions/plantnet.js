@@ -46,13 +46,8 @@ exports.handler = async function (event) {
     fd.append('images', blob, filename || 'flower.jpg');
     fd.append('organs', 'flower');
 
-    // Build URL with API key + optional GPS
-    let url = `${PLANTNET_URL}?lang=he&api-key=${apiKey}`;
-    const latitude  = parseFloat(lat);
-    const longitude = parseFloat(lon);
-    if (!isNaN(latitude) && !isNaN(longitude)) {
-      url += `&lat=${latitude}&lon=${longitude}`;
-    }
+    // Build URL with API key
+    const url = `${PLANTNET_URL}?lang=he&api-key=${apiKey}`;
 
     const response = await fetch(url, {
       method: 'POST',
