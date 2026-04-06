@@ -989,7 +989,7 @@ function bindEvents() {
     btnCamera.classList.add('btn-disabled');
     btnCamera.disabled = true;
     btnCamera.setAttribute('aria-disabled', 'true');
-    btnCamera.title = 'צילום זמין במכשירים ניידים בלבד';
+    document.getElementById('camera-desktop-note').style.display = '';
   }
   btnCamera.addEventListener('click', () => {
     if (!isMobile) return;
