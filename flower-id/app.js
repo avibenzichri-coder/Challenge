@@ -968,7 +968,11 @@ function bindEvents() {
   document.getElementById('input-gallery').addEventListener('change', handleFileSelected);
 
   document.getElementById('btn-camera').addEventListener('click', () => {
-    const inp = document.getElementById('input-camera');
+    // On desktop, capture="environment" just opens file picker anyway — use gallery input instead
+    const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+    const inp = isMobile
+      ? document.getElementById('input-camera')
+      : document.getElementById('input-gallery');
     inp.value = ''; inp.click();
   });
   document.getElementById('btn-gallery').addEventListener('click', () => {
