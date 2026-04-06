@@ -351,6 +351,33 @@ async function fetchKKLBySciName(sciName) {
 // ============================================================
 // WIKIPEDIA (Hebrew)
 // ============================================================
+// Fetch a specific section from a Wikipedia page by searching section titles
+async function callWikipediaHESection(pageName, sectionTitle) {
+  try {
+    const sectionUrl = 'https://he.wikipedia.org/w/api.php?action=parse' +
+      '&page=' + encodeURIComponent(pageName) +
+      '&prop=sections&format=json&origin=*';
+    const secResp = await fetchWithTimeout(sectionUrl, {}, 6000);
+    if (!secResp.ok) return null;
+    const secData = await secResp.json();
+    const sections = secData.parse?.sections || [];
+    if (DEBUG_MODE) console.log(`📖 Wiki sections for "${pageName}":`, sections.map(s => `[${s.index}] "${s.line}"`));
+    const match = sections.find(s => s.line === sectionTitle || s.anchor === sectionTitle.replace(/ /g, '_'));
+    if (!match) return null;
+    const contentUrl = 'https://he.wikipedia.org/w/api.php?action=parse' +
+      '&page=' + encodeURIComponent(pageName) +
+      '&section=' + match.index +
+      '&prop=text&format=json&origin=*';
+    const contentResp = await fetchWithTimeout(contentUrl, {}, 6000);
+    if (!contentResp.ok) return null;
+    const contentData = await contentResp.json();
+    const html = contentData.parse?.text?.['*'] || '';
+    const extract = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 800) || null;
+    if (DEBUG_MODE) console.log(`📖 Wiki section match: [${match.index}] "${match.line}", extract=${extract?.length}`);
+    return extract ? { extract, url: `https://he.wikipedia.org/wiki/${encodeURIComponent(pageName)}#${match.anchor}` } : null;
+  } catch { return null; }
+}
+
 async function callWikipediaHE(hebrewTitle) {
   const cacheKey = 'wiki:' + hebrewTitle;
   if (DEBUG_MODE) console.log(`📖 callWikipediaHE("${hebrewTitle}") — cached=${CACHE.has(cacheKey)}`);
@@ -367,44 +394,27 @@ async function callWikipediaHE(hebrewTitle) {
     const pages = data.query?.pages;
     if (!pages) { CACHE.set(cacheKey, null); return null; }
     const page = Object.values(pages)[0];
-    if (!page || page.missing !== undefined) { CACHE.set(cacheKey, null); return null; }
 
     let extract = null;
     const redirect = data.query?.redirects?.[0];
-    if (DEBUG_MODE) console.log(`📖 Wiki query [${hebrewTitle}]: page="${page.title}", missing=${page.missing}, redirect=`, redirect, 'extract length=', page.extract?.length);
+
+    // If page is missing entirely (no redirect), try first word as genus page + section search
+    if (!page || page.missing !== undefined) {
+      const firstWord = hebrewTitle.split(' ')[0];
+      if (firstWord === hebrewTitle) { CACHE.set(cacheKey, null); return null; }
+      if (DEBUG_MODE) console.log(`📖 Wiki: "${hebrewTitle}" missing — trying genus page "${firstWord}"`);
+      const genusResult = await callWikipediaHESection(firstWord, hebrewTitle);
+      CACHE.set(cacheKey, genusResult);
+      return genusResult;
+    }
+
+    if (DEBUG_MODE) console.log(`📖 Wiki query [${hebrewTitle}]: page="${page.title}", redirect=`, redirect, 'extract length=', page.extract?.length);
 
     // If redirected to a different page, try to find a section matching the original title
     const targetPage = redirect?.to || page.title;
     if (redirect && targetPage !== hebrewTitle) {
-      const sectionUrl = 'https://he.wikipedia.org/w/api.php?action=parse' +
-        '&page=' + encodeURIComponent(targetPage) +
-        '&prop=sections&format=json&origin=*';
-      const secResp = await fetchWithTimeout(sectionUrl, {}, 6000);
-      if (secResp.ok) {
-        const secData = await secResp.json();
-        const sections = secData.parse?.sections || [];
-        if (DEBUG_MODE) console.log(`📖 Wiki sections for "${targetPage}":`, sections.map(s => `[${s.index}] anchor="${s.anchor}" line="${s.line}"`));
-        // Match section by anchor or line against original title or its fragment form
-        const fragment = redirect.tofragment || hebrewTitle.replace(/ /g, '_');
-        const match = sections.find(s =>
-          s.anchor === fragment ||
-          s.line   === hebrewTitle ||
-          s.line   === fragment.replace(/_/g, ' ')
-        );
-        if (match) {
-          const contentUrl = 'https://he.wikipedia.org/w/api.php?action=parse' +
-            '&page=' + encodeURIComponent(targetPage) +
-            '&section=' + match.index +
-            '&prop=text&format=json&origin=*';
-          const contentResp = await fetchWithTimeout(contentUrl, {}, 6000);
-          if (contentResp.ok) {
-            const contentData = await contentResp.json();
-            const html = contentData.parse?.text?.['*'] || '';
-            extract = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 800) || null;
-            if (DEBUG_MODE) console.log(`📖 Wiki section match found: [${match.index}] "${match.line}", extract=${extract?.length}`);
-          }
-        }
-      }
+      const sectionResult = await callWikipediaHESection(targetPage, hebrewTitle);
+      if (sectionResult?.extract) extract = sectionResult.extract;
     }
 
     // Fall back to intro of the (possibly redirected) page
