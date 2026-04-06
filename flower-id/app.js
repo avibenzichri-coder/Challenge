@@ -833,26 +833,21 @@ function renderResult({ hebrewName, sciName, family, hebrewFamily, score, apiIma
   const kklFields = kklData && ['englishName','arabicName','petalCount','leafShape','leafEdge',
     'lifeForm','stemShape','habitat','floweringSeason','distribution'].some(k => kklData[k]);
 
-  if (kklFields) {
-    const val = v => v
-      ? `<span class="kkl-value">${v}</span>`
-      : `<span class="kkl-value empty">—</span>`;
+  const fields = kklData ? [
+    { label: 'עונת פריחה',     value: kklData.floweringSeason, wide: false },
+    { label: 'בית גידול',      value: kklData.habitat,         wide: false },
+    { label: 'צורת חיים',      value: kklData.lifeForm,        wide: false },
+    { label: 'שם עממי',        value: kklData.englishName,     wide: false },
+    { label: 'שם ערבי',        value: kklData.arabicName,      wide: false },
+    { label: "מס' עלי כותרת", value: kklData.petalCount,      wide: false },
+    { label: 'תפוצה בארץ',     value: kklData.distribution,    wide: true  },
+  ].filter(f => f.value) : [];
 
-    // Only show high-value fields that have data
-    const fields = [
-      { label: 'עונת פריחה',  value: kklData.floweringSeason, wide: false },
-      { label: 'בית גידול',   value: kklData.habitat,         wide: false },
-      { label: 'צורת חיים',   value: kklData.lifeForm,        wide: false },
-      { label: 'שם עממי',     value: kklData.englishName,     wide: false },
-      { label: 'שם ערבי',     value: kklData.arabicName,      wide: false },
-      { label: 'מס׳ עלי כותרת', value: kklData.petalCount,   wide: false },
-      { label: 'תפוצה בארץ',  value: kklData.distribution,    wide: true  },
-    ].filter(f => f.value);
-
+  if (fields.length > 0) {
     const gridHTML = fields.map(f =>
       `<div class="kkl-field${f.wide ? ' full-width' : ''}">
         <span class="kkl-label">${f.label}</span>
-        ${val(f.value)}
+        <span class="kkl-value">${f.value}</span>
       </div>`
     ).join('');
 
@@ -860,7 +855,7 @@ function renderResult({ hebrewName, sciName, family, hebrewFamily, score, apiIma
       ? `<div class="kkl-url-row"><a href="${kklData.kklUrl}" target="_blank" rel="noopener">מקור: KKL ↗</a></div>`
       : '';
 
-    kklDiv.innerHTML    = `<div class="kkl-grid">${gridHTML}</div>${kklLink}`;
+    kklDiv.innerHTML     = `<div class="kkl-grid">${gridHTML}</div>${kklLink}`;
     kklDiv.style.display = '';
   } else {
     kklDiv.style.display = 'none';
