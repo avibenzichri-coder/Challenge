@@ -163,11 +163,12 @@ body {
 }
 .btn-ghost:hover { color: var(--forest); }
 .btn-outline {
-  background: transparent;
+  background: var(--sage-faint);
   color: var(--forest);
   border: 1.5px solid var(--sage);
+  font-weight: 700;
 }
-.btn-outline:hover { background: var(--sage-faint); border-color: var(--forest); }
+.btn-outline:hover { background: #d0e8d8; border-color: var(--forest-mid); box-shadow: var(--shadow); }
 .action-group {
   display: flex;
   flex-direction: column;
@@ -323,25 +324,37 @@ body {
 .result-confidence-badge {
   display: inline-flex;
   align-items: center;
-  background: var(--gold-pale);
-  color: var(--gold);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
-  padding: 3px 10px;
+  padding: 4px 12px;
   border-radius: 20px;
-  margin-bottom: 10px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  border: 1px solid rgba(184,145,74,0.25);
+  margin-bottom: 12px;
+  letter-spacing: 0.03em;
+  border: 1px solid transparent;
+}
+.confidence-high {
+  background: #e6f4ec;
+  color: #2a7a47;
+  border-color: rgba(42,122,71,0.25);
+}
+.confidence-mid {
+  background: var(--gold-pale);
+  color: #a07030;
+  border-color: rgba(184,145,74,0.30);
+}
+.confidence-low {
+  background: #faeae7;
+  color: #a03a2a;
+  border-color: rgba(160,58,42,0.25);
 }
 .result-name {
   font-family: 'Frank Ruhl Libre', 'Arial Hebrew', Georgia, serif;
-  font-size: 30px;
+  font-size: 34px;
   font-weight: 900;
   color: var(--forest);
-  margin-bottom: 5px;
-  line-height: 1.25;
-  letter-spacing: -0.01em;
+  margin-bottom: 4px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 .result-sci {
   font-family: 'EB Garamond', 'Times New Roman', Georgia, serif;
@@ -473,6 +486,16 @@ body {
   flex-shrink: 0;
 }
 .candidate-info { flex: 1; min-width: 0; }
+.candidate-heb {
+  font-family: 'Frank Ruhl Libre', 'Arial Hebrew', Georgia, serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--forest);
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .candidate-sci  {
   font-family: 'EB Garamond', 'Times New Roman', Georgia, serif;
   font-size: 16px;
@@ -526,14 +549,13 @@ body {
   grid-column: 1 / -1;
 }
 .kkl-label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--text-muted);
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 .kkl-value {
-  font-size: 14px;
+  font-size: 15px;
   color: var(--text-dark);
   line-height: 1.4;
   font-family: 'Frank Ruhl Libre', 'Arial Hebrew', Georgia, serif;

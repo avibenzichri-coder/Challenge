@@ -759,8 +759,11 @@ function renderCandidates(candidates) {
 
     const info = document.createElement('div');
     info.className = 'candidate-info';
-    info.innerHTML = `<div class="candidate-sci">${c.sciName}</div>
-                      <div class="candidate-family">${c.familySci}</div>`;
+    const hebrewLabel = c.checked?.hebrewName || c.checked?.wd?.hebrewLabel || c.checked?.inat || c.checked?.gbif || '';
+    info.innerHTML = `
+      ${hebrewLabel ? `<div class="candidate-heb">${hebrewLabel}</div>` : ''}
+      <div class="candidate-sci">${c.sciName}</div>
+      <div class="candidate-family">${c.familySci}</div>`;
     card.appendChild(info);
 
     const badge = document.createElement('span');
@@ -806,8 +809,11 @@ function renderResult({ hebrewName, sciName, family, hebrewFamily, score, apiIma
   }
 
   const badge = document.getElementById('result-confidence');
-  badge.textContent    = `ביטחון ${Math.round(score * 100)}%`;
-  badge.style.display  = DEBUG_MODE ? 'inline-block' : 'none';
+  const scorePct = Math.round(score * 100);
+  badge.textContent   = `ביטחון ${scorePct}%`;
+  badge.style.display = 'inline-block';
+  badge.className = 'result-confidence-badge ' +
+    (scorePct >= 70 ? 'confidence-high' : scorePct >= 40 ? 'confidence-mid' : 'confidence-low');
 
   document.getElementById('result-heb-name').textContent = hebrewName || sciName || '—';
   document.getElementById('result-sci-name').textContent = hebrewName ? sciName : '';
@@ -832,18 +838,16 @@ function renderResult({ hebrewName, sciName, family, hebrewFamily, score, apiIma
       ? `<span class="kkl-value">${v}</span>`
       : `<span class="kkl-value empty">—</span>`;
 
+    // Only show high-value fields that have data
     const fields = [
-      { label: 'שם עממי',        value: kklData.englishName,     wide: false },
-      { label: 'שם ערבי',        value: kklData.arabicName,      wide: false },
-      { label: 'מס׳ עלי כותרת', value: kklData.petalCount,      wide: false },
-      { label: 'צורת העלה',      value: kklData.leafShape,       wide: false },
-      { label: 'שפת העלה',       value: kklData.leafEdge,        wide: false },
-      { label: 'צורת חיים',      value: kklData.lifeForm,        wide: false },
-      { label: 'צורת הגבעול',    value: kklData.stemShape,       wide: false },
-      { label: 'בית גידול',      value: kklData.habitat,         wide: false },
-      { label: 'עונת הפריחה',    value: kklData.floweringSeason, wide: false },
-      { label: 'תפוצה בארץ',     value: kklData.distribution,    wide: true  },
-    ];
+      { label: 'עונת פריחה',  value: kklData.floweringSeason, wide: false },
+      { label: 'בית גידול',   value: kklData.habitat,         wide: false },
+      { label: 'צורת חיים',   value: kklData.lifeForm,        wide: false },
+      { label: 'שם עממי',     value: kklData.englishName,     wide: false },
+      { label: 'שם ערבי',     value: kklData.arabicName,      wide: false },
+      { label: 'מס׳ עלי כותרת', value: kklData.petalCount,   wide: false },
+      { label: 'תפוצה בארץ',  value: kklData.distribution,    wide: true  },
+    ].filter(f => f.value);
 
     const gridHTML = fields.map(f =>
       `<div class="kkl-field${f.wide ? ' full-width' : ''}">
