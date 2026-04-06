@@ -222,23 +222,29 @@ body {
 }
 
 .app-logo {
-  font-size: 88px;
   margin-bottom: 18px;
   line-height: 1;
-  filter: drop-shadow(0 0 30px rgba(100,180,255,0.60));
+  filter: drop-shadow(0 0 30px rgba(200,60,60,0.55));
   animation: landing-bloom 0.7s cubic-bezier(0.22, 1, 0.36, 1) both,
              float 4s ease-in-out 0.7s infinite;
   position: relative;
   z-index: 1;
 }
+.app-logo-img {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  display: block;
+}
 @keyframes landing-bloom {
-  0%   { transform: scale(0.3) rotate(-15deg); opacity: 0; filter: drop-shadow(0 0 0px rgba(100,180,255,0)); }
-  70%  { transform: scale(1.12) rotate(4deg);  opacity: 1; }
+  0%   { transform: scale(0.2) rotate(-20deg); opacity: 0; filter: drop-shadow(0 0 0px rgba(200,60,60,0)); }
+  60%  { transform: scale(1.15) rotate(5deg);  opacity: 1; }
+  80%  { transform: scale(0.95) rotate(-2deg); }
   100% { transform: scale(1)    rotate(0deg);  opacity: 1; }
 }
 @keyframes float {
-  0%, 100% { transform: translateY(0)    rotate(-1deg); filter: drop-shadow(0 0 28px rgba(100,180,255,0.55)); }
-  50%       { transform: translateY(-8px) rotate(1deg);  filter: drop-shadow(0 8px 36px rgba(100,180,255,0.80)); }
+  0%, 100% { transform: translateY(0)    rotate(-1deg); filter: drop-shadow(0 4px 24px rgba(200,60,60,0.50)); }
+  50%       { transform: translateY(-10px) rotate(1deg); filter: drop-shadow(0 12px 40px rgba(200,60,60,0.70)); }
 }
 
 .hero h1 {
