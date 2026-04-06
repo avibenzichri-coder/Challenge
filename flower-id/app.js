@@ -380,7 +380,7 @@ async function callWikipediaHE(hebrewTitle) {
       if (secResp.ok) {
         const secData = await secResp.json();
         const sections = secData.parse?.sections || [];
-        const match = sections.find(s => s.line && s.line.includes(hebrewTitle.split(' ')[0]));
+        const match = sections.find(s => s.line && s.line.includes(hebrewTitle));
         if (match) {
           const contentUrl = 'https://he.wikipedia.org/w/api.php?action=parse' +
             '&page=' + encodeURIComponent(redirectTarget) +
