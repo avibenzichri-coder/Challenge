@@ -353,6 +353,7 @@ async function fetchKKLBySciName(sciName) {
 // ============================================================
 async function callWikipediaHE(hebrewTitle) {
   const cacheKey = 'wiki:' + hebrewTitle;
+  if (DEBUG_MODE) console.log(`📖 callWikipediaHE("${hebrewTitle}") — cached=${CACHE.has(cacheKey)}`);
   if (CACHE.has(cacheKey)) return CACHE.get(cacheKey);
 
   try {
