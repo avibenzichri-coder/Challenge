@@ -983,12 +983,17 @@ function bindEvents() {
   document.getElementById('input-camera').addEventListener('change',  handleFileSelected);
   document.getElementById('input-gallery').addEventListener('change', handleFileSelected);
 
-  document.getElementById('btn-camera').addEventListener('click', () => {
-    // On desktop, capture="environment" just opens file picker anyway — use gallery input instead
-    const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
-    const inp = isMobile
-      ? document.getElementById('input-camera')
-      : document.getElementById('input-gallery');
+  const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+  const btnCamera = document.getElementById('btn-camera');
+  if (!isMobile) {
+    btnCamera.classList.add('btn-disabled');
+    btnCamera.disabled = true;
+    btnCamera.setAttribute('aria-disabled', 'true');
+    btnCamera.title = 'צילום זמין במכשירים ניידים בלבד';
+  }
+  btnCamera.addEventListener('click', () => {
+    if (!isMobile) return;
+    const inp = document.getElementById('input-camera');
     inp.value = ''; inp.click();
   });
   document.getElementById('btn-gallery').addEventListener('click', () => {
