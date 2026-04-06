@@ -37,10 +37,7 @@ body {
   font-size: 17px;
   line-height: 1.65;
   color: var(--text-dark);
-  background-color: var(--parchment);
-  background-image:
-    radial-gradient(ellipse 80% 55% at 25% 5%,  rgba(58, 123, 213, 0.10) 0%, transparent 65%),
-    radial-gradient(ellipse 60% 45% at 78% 92%, rgba(200, 168, 75, 0.08) 0%, transparent 65%);
+  background: linear-gradient(160deg, #0a1f52 0%, #0d2b6e 45%, #1a3a8a 75%, #0a1830 100%) fixed;
   background-attachment: fixed;
   min-height: 100vh;
 }
@@ -189,11 +186,9 @@ body {
 
 /* ===== Landing Screen ===== */
 #screen-landing {
-  background: linear-gradient(160deg, #0a1f52 0%, #0d2b6e 45%, #1a3a8a 75%, #0a1830 100%);
   position: relative;
   overflow: hidden;
 }
-/* Subtle star-of-david shimmer circles in background */
 #screen-landing::before,
 #screen-landing::after {
   content: '';
@@ -347,10 +342,10 @@ body {
 .spinner {
   width: 48px;
   height: 48px;
-  border: 3px solid var(--sage-faint);
+  border: 3px solid rgba(100,160,255,0.25);
   border-top-color: transparent;
-  border-right-color: var(--forest);
-  border-bottom-color: var(--sage);
+  border-right-color: #ffffff;
+  border-bottom-color: rgba(120,180,255,0.80);
   border-radius: 50%;
   animation: spin 1s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite;
 }
@@ -359,9 +354,10 @@ body {
   font-family: 'Frank Ruhl Libre', 'Arial Hebrew', Georgia, serif;
   font-size: 22px;
   font-weight: 700;
-  color: var(--forest);
+  color: #ffffff;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.3);
 }
-.loading-sub { font-size: 15px; color: var(--text-muted); margin-top: -8px; }
+.loading-sub { font-size: 15px; color: rgba(180,210,255,0.85); margin-top: -8px; }
 
 /* ===== Result Screen ===== */
 .result-card {
@@ -504,7 +500,7 @@ body {
 /* ===== Candidates Screen ===== */
 .candidates-intro {
   font-size: 16px;
-  color: var(--text-muted);
+  color: rgba(180,210,255,0.90);
   text-align: center;
   margin-bottom: 20px;
   max-width: 340px;
