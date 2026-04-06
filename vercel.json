@@ -1,0 +1,8 @@
+{
+  "outputDirectory": "flower-id",
+  "functions": {
+    "api/*.js": {
+      "runtime": "nodejs18.x"
+    }
+  }
+}

@@ -3,8 +3,8 @@
 // ============================================================
 // CONFIG
 // ============================================================
-const PLANTNET_FUNCTION  = '/.netlify/functions/plantnet';
-const KKL_FUNCTION       = '/.netlify/functions/kkl';
+const PLANTNET_FUNCTION  = '/api/plantnet';
+const KKL_FUNCTION       = '/api/kkl';
 const CONFIDENCE_THRESHOLD = 0.15;
 const CONFIDENCE_LOW       = 0.65;
 const WIKI_HE_URL          = 'https://he.wikipedia.org/api/rest_v1/page/summary/';
