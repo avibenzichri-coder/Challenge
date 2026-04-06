@@ -370,6 +370,7 @@ async function callWikipediaHE(hebrewTitle) {
 
     let extract = null;
     const redirect = data.query?.redirects?.[0];
+    if (DEBUG_MODE) console.log(`📖 Wiki query [${hebrewTitle}]: page="${page.title}", missing=${page.missing}, redirect=`, redirect, 'extract length=', page.extract?.length);
 
     // If redirect has a section anchor (tofragment), fetch that specific section
     if (redirect?.tofragment) {
@@ -382,6 +383,7 @@ async function callWikipediaHE(hebrewTitle) {
         const sections = secData.parse?.sections || [];
         // Match by anchor (most reliable) or by section title
         const fragment = redirect.tofragment;
+        if (DEBUG_MODE) console.log(`📖 Wiki sections for "${redirect.to}":`, sections.map(s => `[${s.index}] anchor="${s.anchor}" line="${s.line}"`));
         const match = sections.find(s => s.anchor === fragment || s.line === fragment.replace(/_/g, ' '));
         if (match) {
           const contentUrl = 'https://he.wikipedia.org/w/api.php?action=parse' +
