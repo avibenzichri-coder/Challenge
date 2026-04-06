@@ -356,12 +356,54 @@ async function callWikipediaHE(hebrewTitle) {
   if (CACHE.has(cacheKey)) return CACHE.get(cacheKey);
 
   try {
-    const resp = await fetchWithTimeout(WIKI_HE_URL + encodeURIComponent(hebrewTitle), {}, 6000);
+    // Use action=query with redirects=1 — handles "חלמית גדולה" → "חלמית" redirects
+    const url = 'https://he.wikipedia.org/w/api.php?action=query' +
+      '&titles=' + encodeURIComponent(hebrewTitle) +
+      '&redirects=1&prop=extracts|info&exintro=0&inprop=url&format=json&origin=*';
+    const resp = await fetchWithTimeout(url, {}, 6000);
     if (!resp.ok) { CACHE.set(cacheKey, null); return null; }
     const data = await resp.json();
+    const pages = data.query?.pages;
+    if (!pages) { CACHE.set(cacheKey, null); return null; }
+    const page = Object.values(pages)[0];
+    if (!page || page.missing !== undefined) { CACHE.set(cacheKey, null); return null; }
+
+    // If redirect resolved, try to find the specific section for the original title
+    const redirectTarget = data.query?.redirects?.[0]?.to;
+    let extract = null;
+    if (redirectTarget && hebrewTitle !== redirectTarget) {
+      // Search for the section matching the original title inside the redirect target page
+      const sectionUrl = 'https://he.wikipedia.org/w/api.php?action=parse' +
+        '&page=' + encodeURIComponent(redirectTarget) +
+        '&prop=sections&format=json&origin=*';
+      const secResp = await fetchWithTimeout(sectionUrl, {}, 6000);
+      if (secResp.ok) {
+        const secData = await secResp.json();
+        const sections = secData.parse?.sections || [];
+        const match = sections.find(s => s.line && s.line.includes(hebrewTitle.split(' ')[0]));
+        if (match) {
+          const contentUrl = 'https://he.wikipedia.org/w/api.php?action=parse' +
+            '&page=' + encodeURIComponent(redirectTarget) +
+            '&section=' + match.index +
+            '&prop=text&format=json&origin=*';
+          const contentResp = await fetchWithTimeout(contentUrl, {}, 6000);
+          if (contentResp.ok) {
+            const contentData = await contentResp.json();
+            const html = contentData.parse?.text?.['*'] || '';
+            extract = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 800) || null;
+          }
+        }
+      }
+    }
+
+    // Fall back to the full page intro if no section found
+    if (!extract) {
+      extract = page.extract ? page.extract.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() : null;
+    }
+
     const result = {
-      extract: data.extract || null,
-      url:     data.content_urls?.desktop?.page || null,
+      extract: extract || null,
+      url:     page.fullurl || null,
     };
     CACHE.set(cacheKey, result);
     return result;
