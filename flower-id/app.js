@@ -572,12 +572,22 @@ async function resolveAndRender(sciName, familySci, score, apiImageURL, prefetch
     }
   }
 
-  // Try fetching Wikipedia summary by Hebrew name directly (handles redirects, e.g. "חלמית גדולה" → "חלמית")
+  // Try fetching Wikipedia summary by Hebrew name directly
+  // If "חלמית גדולה" fails (no dedicated page), fall back to first word "חלמית" (genus page often contains species info)
   if (!wikiSummary && hebrewName && !isGenusLevel) {
     const heNameWiki = await callWikipediaHE(hebrewName);
     if (heNameWiki?.extract) {
       wikiSummary = heNameWiki.extract;
       if (!speciesWikiUrl) speciesWikiUrl = heNameWiki.url;
+    } else {
+      const firstWord = hebrewName.split(' ')[0];
+      if (firstWord !== hebrewName) {
+        const genusHeWiki = await callWikipediaHE(firstWord);
+        if (genusHeWiki?.extract) {
+          wikiSummary = genusHeWiki.extract;
+          if (!speciesWikiUrl) speciesWikiUrl = genusHeWiki.url;
+        }
+      }
     }
   }
 
