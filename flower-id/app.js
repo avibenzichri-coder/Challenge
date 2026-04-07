@@ -5,8 +5,9 @@
 // ============================================================
 const PLANTNET_FUNCTION  = '/api/plantnet';
 const KKL_FUNCTION       = '/api/kkl';
-const CONFIDENCE_THRESHOLD = 0.15;
-const CONFIDENCE_LOW       = 0.65;
+const CONFIDENCE_THRESHOLD = 0.15;  // below → not found
+const CONFIDENCE_RETAKE    = 0.35;  // below → ask to retake (unclear photo)
+const CONFIDENCE_LOW       = 0.65;  // above → high confidence direct result
 const WIKIDATA_SPARQL      = 'https://query.wikidata.org/sparql';
 const DEBUG_MODE           = new URLSearchParams(window.location.search).get('debug') === '1';
 
@@ -679,6 +680,11 @@ async function processResult(plantnetJson) {
     return;
   }
 
+  if (best.score < CONFIDENCE_RETAKE) {
+    renderError('low_confidence');
+    return;
+  }
+
   // High confidence path
   if (best.score >= CONFIDENCE_LOW) {
     const c = extractCandidate(best);
@@ -883,6 +889,17 @@ const ERROR_CONFIGS = {
       'צלם באור יום טבעי — הימנע מפלאש',
       'הימנע מרקע עמוס — שמיים או קיר נקי עדיפים',
       'ודא שהפרח במרכז התמונה',
+    ],
+  },
+  low_confidence: {
+    icon: '📸', title: 'התמונה לא ברורה מספיק',
+    message: 'זיהינו פרח אפשרי אך הביטחון נמוך מדי. נסה לצלם שוב:',
+    tips: [
+      'התקרב לפרח — מלא את רוב המסגרת',
+      'הקש על המסך לפני הצילום כדי להתמקד',
+      'צלם באור טבעי — הימנע מצל או בהק',
+      'החזק את הטלפון יציב בזמן הצילום',
+      'נסה זווית אחרת — מלפנים או מלמעלה',
     ],
   },
   no_israeli_match: {
