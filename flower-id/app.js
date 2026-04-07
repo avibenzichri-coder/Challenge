@@ -9,8 +9,6 @@ const CONFIDENCE_THRESHOLD = 0.15;
 const CONFIDENCE_LOW       = 0.65;
 const WIKI_HE_URL          = 'https://he.wikipedia.org/api/rest_v1/page/summary/';
 const WIKIDATA_SPARQL      = 'https://query.wikidata.org/sparql';
-const ISRAEL_LAT           = 31.5;
-const ISRAEL_LON           = 34.8;
 const DEBUG_MODE           = new URLSearchParams(window.location.search).get('debug') === '1';
 
 // ============================================================
@@ -19,7 +17,6 @@ const DEBUG_MODE           = new URLSearchParams(window.location.search).get('de
 const STATE = {
   currentFile:    null,
   previewDataURL: null,
-  gpsCoords:      null,   // { lat, lon } — fetched once, used in PlantNet call
 };
 
 // Session-level cache keyed by scientific name (or Hebrew name for KKL)
@@ -78,17 +75,6 @@ function compressImage(file) {
   });
 }
 
-// GPS — resolves to Israel center if denied/unavailable
-function getGPS() {
-  return new Promise(resolve => {
-    if (!navigator.geolocation) { resolve({ lat: ISRAEL_LAT, lon: ISRAEL_LON }); return; }
-    navigator.geolocation.getCurrentPosition(
-      pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
-      ()  => resolve({ lat: ISRAEL_LAT, lon: ISRAEL_LON }),
-      { timeout: 5000, maximumAge: 60000 }
-    );
-  });
-}
 
 // ============================================================
 // SCREEN MANAGEMENT
@@ -132,7 +118,7 @@ function handleFileSelected(event) {
 // ============================================================
 // PLANTNET API (via proxy)
 // ============================================================
-async function callPlantNetAPI(blob, filename, gps) {
+async function callPlantNetAPI(blob, filename) {
   // Convert blob to base64 for JSON transport
   const base64 = await new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -144,8 +130,6 @@ async function callPlantNetAPI(blob, filename, gps) {
   const payload = {
     image:    base64,
     filename: filename || 'flower.jpg',
-    lat:      gps ? gps.lat : ISRAEL_LAT,
-    lon:      gps ? gps.lon : ISRAEL_LON,
   };
 
   const response = await fetchWithTimeout(
@@ -936,15 +920,8 @@ function renderError(type, httpStatus) {
 async function identifyFlower(blob, filename) {
   showScreen('loading');
   try {
-    // Compress image + fetch GPS in parallel — neither blocks the other
-    const [compressedBlob, gps] = await Promise.all([
-      compressImage(blob),
-      STATE.gpsCoords
-        ? Promise.resolve(STATE.gpsCoords)
-        : getGPS().then(coords => { STATE.gpsCoords = coords; return coords; }),
-    ]);
-
-    const plantnetJson = await callPlantNetAPI(compressedBlob, filename, gps);
+    const compressedBlob = await compressImage(blob);
+    const plantnetJson   = await callPlantNetAPI(compressedBlob, filename);
 
     if (DEBUG_MODE) {
       console.group('🌸 Flower ID Debug');

@@ -16,6 +16,7 @@ module.exports = async (req, res) => {
   }
 
   const { image, filename } = req.body || {};
+
   if (!image) {
     return res.status(400).json({ error: 'Missing image field' });
   }
