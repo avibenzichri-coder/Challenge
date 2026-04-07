@@ -7,7 +7,6 @@ const PLANTNET_FUNCTION  = '/api/plantnet';
 const KKL_FUNCTION       = '/api/kkl';
 const CONFIDENCE_THRESHOLD = 0.15;
 const CONFIDENCE_LOW       = 0.65;
-const WIKI_HE_URL          = 'https://he.wikipedia.org/api/rest_v1/page/summary/';
 const WIKIDATA_SPARQL      = 'https://query.wikidata.org/sparql';
 const DEBUG_MODE           = new URLSearchParams(window.location.search).get('debug') === '1';
 
@@ -432,17 +431,26 @@ async function searchWikipediaHE(sciName) {
     const hebrewTitle = searchData.query?.search?.[0]?.title;
     if (!hebrewTitle) return null;
 
-    const summaryResp = await fetchWithTimeout(WIKI_HE_URL + encodeURIComponent(hebrewTitle), {}, 6000);
+    const summaryResp = await fetchWithTimeout(
+      'https://he.wikipedia.org/w/api.php?action=query' +
+      '&titles=' + encodeURIComponent(hebrewTitle) +
+      '&redirects=1&prop=extracts|info&exintro=1&inprop=url&format=json&origin=*',
+      {},
+      6000
+    );
     if (!summaryResp.ok) return null;
 
-    const data    = await summaryResp.json();
-    const extract = data.extract || '';
+    const summaryData = await summaryResp.json();
+    const page        = Object.values(summaryData.query?.pages || {})[0];
+    if (!page || page.missing !== undefined) return null;
+
+    const extract = page.extract ? page.extract.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() : '';
     if (!extract.includes(genus)) return null;   // genus validation
 
     return {
       title:   hebrewTitle,
       extract: extract || null,
-      url:     data.content_urls?.desktop?.page || null,
+      url:     page.fullurl || null,
     };
   } catch { return null; }
 }
@@ -505,6 +513,7 @@ async function resolveHebrewName(sciName) {
 // ============================================================
 
 function extractCandidate(result) {
+  if (!result?.species) return null;
   return {
     sciName:   result.species.scientificNameWithoutAuthor || '',
     familySci: result.species.family?.scientificNameWithoutAuthor || '',
@@ -526,7 +535,8 @@ async function quickHebrewCheck(sciName) {
       const genusResolved = await resolveHebrewName(genus);
       if (genusResolved.hebrewName) {
         if (DEBUG_MODE) console.log(`  genus fallback "${genus}" → "${genusResolved.hebrewName}"`);
-        return { hasHebrew: true, ...resolved, _genusFallback: true };
+        // Merge genus Hebrew name into resolved so resolveAndRender doesn't repeat the lookup
+        return { hasHebrew: true, ...resolved, hebrewName: genusResolved.hebrewName, _genusFallback: true };
       }
     }
   }
@@ -670,7 +680,8 @@ async function processResult(plantnetJson) {
 
   // High confidence path
   if (best.score >= CONFIDENCE_LOW) {
-    const c       = extractCandidate(best);
+    const c = extractCandidate(best);
+    if (!c) { renderError('not_found'); return; }
     const checked = await quickHebrewCheck(c.sciName);
     if (DEBUG_MODE) console.log(`High-confidence "${c.sciName}" (${Math.round(c.score * 100)}%): hasHebrew=${checked.hasHebrew}`);
     if (checked.hasHebrew) {
@@ -681,7 +692,7 @@ async function processResult(plantnetJson) {
   }
 
   // Low-medium confidence: check top 5 candidates
-  const pool = results.slice(0, 5).map(extractCandidate);
+  const pool = results.slice(0, 5).map(extractCandidate).filter(Boolean);
 
   const hebrewChecks = await Promise.allSettled(
     pool.map(async c => ({ ...c, checked: await quickHebrewCheck(c.sciName) }))
@@ -918,6 +929,8 @@ function renderError(type, httpStatus) {
 // MAIN IDENTIFY FLOW
 // ============================================================
 async function identifyFlower(blob, filename) {
+  const btnIdentify = document.getElementById('btn-identify');
+  btnIdentify.disabled = true;
   showScreen('loading');
   try {
     const compressedBlob = await compressImage(blob);
@@ -939,6 +952,8 @@ async function identifyFlower(blob, filename) {
   } catch (err) {
     if (err.type === 'api') renderError('api_error', err.status);
     else renderError('network');
+  } finally {
+    btnIdentify.disabled = false;
   }
 }
 
