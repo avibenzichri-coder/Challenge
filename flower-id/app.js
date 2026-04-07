@@ -140,9 +140,10 @@ async function callPlantNetAPI(blob, filename) {
   if (!response.ok) {
     const errBody = await response.json().catch(() => ({}));
     if (DEBUG_MODE) console.error('PlantNet proxy error', response.status, errBody);
-    const err    = new Error('API error');
-    err.type     = 'api';
-    err.status   = response.status;
+    const err  = new Error('API error');
+    // PlantNet 404 = no plant detected in image → treat as not_found, not api_error
+    err.type   = response.status === 404 ? 'not_found' : 'api';
+    err.status = response.status;
     throw err;
   }
 
@@ -950,8 +951,9 @@ async function identifyFlower(blob, filename) {
     await processResult(plantnetJson);
 
   } catch (err) {
-    if (err.type === 'api') renderError('api_error', err.status);
-    else renderError('network');
+    if (err.type === 'not_found') renderError('not_found');
+    else if (err.type === 'api')  renderError('api_error', err.status);
+    else                          renderError('network');
   } finally {
     btnIdentify.disabled = false;
   }
