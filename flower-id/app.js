@@ -1012,6 +1012,9 @@ function bindEvents() {
   document.getElementById('btn-new-search').addEventListener('click', () => {
     resetState(); showScreen('landing');
   });
+  document.getElementById('btn-candidates-none').addEventListener('click', () => {
+    renderError('no_israeli_match');
+  });
   document.getElementById('btn-candidates-new').addEventListener('click', () => {
     resetState(); showScreen('landing');
   });
