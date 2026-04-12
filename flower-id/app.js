@@ -7,6 +7,7 @@ const PLANTNET_FUNCTION  = '/api/plantnet';
 const KKL_FUNCTION       = '/api/kkl';
 const CONFIDENCE_THRESHOLD = 0.15;  // below → not found
 const CONFIDENCE_LOW       = 0.65;  // above → high confidence direct result
+const CANDIDATE_MIN_SCORE  = 0.05;  // candidates below this are too weak to show
 const WIKIDATA_SPARQL      = 'https://query.wikidata.org/sparql';
 const DEBUG_MODE           = new URLSearchParams(window.location.search).get('debug') === '1';
 
@@ -692,8 +693,8 @@ async function processResult(plantnetJson) {
     if (DEBUG_MODE) console.warn(`"${c.sciName}" failed Hebrew filter — demoting to candidates`);
   }
 
-  // Low-medium confidence: check top 5 candidates
-  const pool = results.slice(0, 5).map(extractCandidate).filter(Boolean);
+  // Low-medium confidence: check top 5 candidates above minimum score
+  const pool = results.slice(0, 5).map(extractCandidate).filter(c => c && c.score >= CANDIDATE_MIN_SCORE);
 
   const hebrewChecks = await Promise.allSettled(
     pool.map(async c => ({ ...c, checked: await quickHebrewCheck(c.sciName) }))
