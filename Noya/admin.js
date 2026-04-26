@@ -190,6 +190,14 @@ document.getElementById('btn-modal-save').addEventListener('click', async () => 
 
     if (file) {
       imageUrl = await fileToBase64(file);
+      // Firestore doc limit is 1MB — image must stay under 800KB (leaving room for other fields)
+      const sizeKB = Math.round((imageUrl.length * 3) / 4 / 1024);
+      if (sizeKB > 800) {
+        alert(`התמונה גדולה מדי לאחר דחיסה (${sizeKB}KB). השתמש בתמונה קטנה יותר.`);
+        btn.disabled = false;
+        btn.textContent = 'שמור';
+        return;
+      }
     }
 
     if (editingProductId) {
