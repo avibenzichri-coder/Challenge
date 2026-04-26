@@ -67,6 +67,18 @@ h1, h2, h3, .brand {
   transition: transform 0.15s, background 0.15s;
 }
 .cart-btn:hover { background: var(--orange-dark); transform: scale(1.05); }
+.admin-link {
+  color: rgba(255,255,255,0.75);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 50px;
+  border: 1px solid rgba(255,255,255,0.3);
+  transition: all 0.15s;
+}
+.admin-link:hover { background: rgba(255,255,255,0.15); color: var(--white); }
+
 .cart-badge {
   background: var(--white);
   color: var(--purple);
