@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ניהול — החנות של נויה</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ══ LOGIN ═════════════════════════════════════════════ -->
+  <div id="screen-login">
+    <div class="login-box">
+      <h2>🔐 כניסת מנהל</h2>
+      <div class="form-group">
+        <label for="login-email">אימייל</label>
+        <input type="email" id="login-email" placeholder="admin@example.com" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label for="login-password">סיסמה</label>
+        <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <div class="login-error" id="login-error"></div>
+      <button class="btn-primary" id="btn-login">כניסה</button>
+    </div>
+  </div>
+
+  <!-- ══ ADMIN PANEL ════════════════════════════════════════ -->
+  <div id="screen-admin" style="display:none">
+
+    <header class="admin-header">
+      <span class="brand">🛍️ ניהול — החנות של נויה</span>
+      <button class="btn-logout" id="btn-logout">יציאה</button>
+    </header>
+
+    <nav class="admin-tabs">
+      <button class="admin-tab active" data-tab="products">📦 מוצרים</button>
+      <button class="admin-tab" data-tab="orders">📋 הזמנות</button>
+      <button class="admin-tab" data-tab="stats">📊 סטטיסטיקה</button>
+    </nav>
+
+    <!-- Products Tab -->
+    <div id="tab-products" class="admin-content">
+      <div class="admin-toolbar">
+        <h2>מוצרים</h2>
+        <button class="btn-add-product" id="btn-new-product">+ הוסף מוצר</button>
+      </div>
+      <div class="products-table" id="products-table">
+        <div style="text-align:center;padding:40px">טוען...</div>
+      </div>
+    </div>
+
+    <!-- Orders Tab -->
+    <div id="tab-orders" class="admin-content" style="display:none">
+      <h2 style="margin-bottom:16px">הזמנות</h2>
+      <div class="orders-filter">
+        <button class="filter-btn active" data-status="all">הכל</button>
+        <button class="filter-btn" data-status="new">חדש</button>
+        <button class="filter-btn" data-status="paid">שולם</button>
+        <button class="filter-btn" data-status="shipped">נשלח</button>
+      </div>
+      <div class="orders-list" id="orders-list">
+        <div style="text-align:center;padding:40px">טוען...</div>
+      </div>
+    </div>
+
+    <!-- Stats Tab -->
+    <div id="tab-stats" class="admin-content" style="display:none">
+      <h2 style="margin-bottom:20px">סטטיסטיקה</h2>
+      <div class="stats-grid" id="stats-grid">
+        <div style="text-align:center;padding:40px;grid-column:1/-1">טוען...</div>
+      </div>
+      <div class="top-products">
+        <h3>🏆 מוצרים נמכרים ביותר</h3>
+        <div id="top-products-list"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ PRODUCT MODAL ══════════════════════════════════════ -->
+  <div class="modal-overlay hidden" id="product-modal">
+    <div class="modal">
+      <h3 id="modal-title">הוסף מוצר</h3>
+      <div class="form-group">
+        <label for="prod-name">שם המוצר *</label>
+        <input type="text" id="prod-name" placeholder="שם המוצר" required>
+      </div>
+      <div class="form-group">
+        <label for="prod-price">מחיר (₪) *</label>
+        <input type="number" id="prod-price" placeholder="0" min="0" required>
+      </div>
+      <div class="form-group">
+        <label for="prod-image">תמונה</label>
+        <input type="file" id="prod-image" accept="image/*">
+        <img id="prod-image-preview" class="image-preview" alt="תצוגה מקדימה">
+      </div>
+      <div class="form-group">
+        <label>
+          <input type="checkbox" id="prod-available" checked>
+          &nbsp;זמין למכירה
+        </label>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="btn-modal-cancel">ביטול</button>
+        <button class="btn-primary" id="btn-modal-save">שמור</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="admin.js"></script>
+</body>
+</html>

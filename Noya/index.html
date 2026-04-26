@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>החנות של נויה</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ══ SCREEN: Store ══════════════════════════════════ -->
+  <div id="screen-store" class="screen active">
+    <header class="header">
+      <span class="brand">🛍️ החנות של נויה</span>
+      <button class="cart-btn" id="btn-open-cart">
+        🛒 עגלה
+        <span class="cart-badge" id="cart-count">0</span>
+      </button>
+    </header>
+
+    <div class="search-bar">
+      <input type="text" id="search-input" placeholder="🔍 חפש מוצר..." autocomplete="off">
+    </div>
+
+    <div id="products-container">
+      <div style="text-align:center;padding:60px">
+        <span class="loading-spinner">⏳</span>
+      </div>
+    </div>
+
+    <div class="pagination" id="pagination"></div>
+  </div>
+
+  <!-- ══ SCREEN: Cart ═══════════════════════════════════ -->
+  <div id="screen-cart" class="screen">
+    <div class="screen-header">
+      <button class="btn-back" id="btn-back-store">←</button>
+      <h2>🛒 העגלה שלי</h2>
+    </div>
+    <div class="cart-list" id="cart-list"></div>
+    <div class="cart-footer">
+      <div class="cart-total">
+        <span>סה"כ:</span>
+        <span class="amount" id="cart-total">₪0</span>
+      </div>
+      <button class="btn-primary" id="btn-to-order">המשך להזמנה ←</button>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: Order Form ═════════════════════════════ -->
+  <div id="screen-order" class="screen">
+    <div class="screen-header">
+      <button class="btn-back" id="btn-back-cart">←</button>
+      <h2>📋 פרטי ההזמנה</h2>
+    </div>
+    <form class="order-form" id="order-form">
+      <div class="form-group">
+        <label for="customer-name">שם פרטי *</label>
+        <input type="text" id="customer-name" placeholder="הכנס את שמך" required>
+      </div>
+      <div class="form-group">
+        <label for="customer-phone">טלפון *</label>
+        <input type="tel" id="customer-phone" placeholder="050-0000000" required>
+      </div>
+      <div class="form-group">
+        <label for="customer-notes">הערות</label>
+        <textarea id="customer-notes" placeholder="כתוב כאן הערות אם יש..."></textarea>
+      </div>
+      <button type="submit" class="btn-primary" id="btn-submit-order">שלח הזמנה 🎉</button>
+    </form>
+  </div>
+
+  <!-- ══ SCREEN: Confirmation ═══════════════════════════ -->
+  <div id="screen-confirm" class="screen">
+    <div class="confirmation">
+      <div class="big-emoji">🎉</div>
+      <h2>ההזמנה נשלחה!</h2>
+      <p>תודה! נחזור אליך בקרוב כדי לתאם את האיסוף.</p>
+      <button class="btn-primary" id="btn-back-home">חזרה לחנות</button>
+    </div>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
