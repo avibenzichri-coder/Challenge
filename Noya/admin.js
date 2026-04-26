@@ -1,14 +1,36 @@
-import { db, storage, auth } from './firebase-config.js';
+import { db, auth } from './firebase-config.js';
 import {
   collection, getDocs, addDoc, updateDoc, deleteDoc, doc,
   query, orderBy, serverTimestamp
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 import {
-  ref, uploadBytes, getDownloadURL, deleteObject
-} from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js';
-import {
   signInWithEmailAndPassword, signOut, onAuthStateChanged
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+
+// ── Image → Base64 ────────────────────────────────────────
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    // Resize to max 600px and compress before storing
+    const img = new Image();
+    img.onload = () => {
+      const MAX = 600;
+      let w = img.width, h = img.height;
+      if (w > MAX || h > MAX) {
+        if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+        else       { w = Math.round(w * MAX / h); h = MAX; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      resolve(canvas.toDataURL('image/jpeg', 0.8));
+    };
+    img.onerror = reject;
+    img.src = URL.createObjectURL(file);
+  });
+}
 
 // ── Auth ──────────────────────────────────────────────────
 onAuthStateChanged(auth, user => {
@@ -103,13 +125,6 @@ document.getElementById('products-table').addEventListener('click', async e => {
 
   if (e.target.classList.contains('btn-delete')) {
     if (!confirm(`למחוק את "${products.find(p => p.id === id)?.name}"?`)) return;
-    const product = products.find(p => p.id === id);
-    if (product?.imageUrl) {
-      try {
-        const imgRef = ref(storage, `products/${id}`);
-        await deleteObject(imgRef);
-      } catch { /* image may not exist */ }
-    }
     await deleteDoc(doc(db, 'products', id));
     await loadProducts();
   }
@@ -174,11 +189,7 @@ document.getElementById('btn-modal-save').addEventListener('click', async () => 
       : '';
 
     if (file) {
-      const ext = file.name.split('.').pop().toLowerCase();
-      const safeName = `products/${Date.now()}.${ext}`;
-      const storageRef = ref(storage, safeName);
-      const snap = await uploadBytes(storageRef, file);
-      imageUrl = await getDownloadURL(snap.ref);
+      imageUrl = await fileToBase64(file);
     }
 
     if (editingProductId) {
