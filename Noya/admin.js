@@ -174,7 +174,9 @@ document.getElementById('btn-modal-save').addEventListener('click', async () => 
       : '';
 
     if (file) {
-      const storageRef = ref(storage, `products/${editingProductId || Date.now()}_${file.name}`);
+      const ext = file.name.split('.').pop().toLowerCase();
+      const safeName = `products/${Date.now()}.${ext}`;
+      const storageRef = ref(storage, safeName);
       const snap = await uploadBytes(storageRef, file);
       imageUrl = await getDownloadURL(snap.ref);
     }
