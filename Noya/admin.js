@@ -193,10 +193,16 @@ document.getElementById('btn-modal-save').addEventListener('click', async () => 
       // Firestore doc limit is 1MB — image must stay under 800KB (leaving room for other fields)
       const sizeKB = Math.round((imageUrl.length * 3) / 4 / 1024);
       if (sizeKB > 800) {
-        alert(`התמונה גדולה מדי לאחר דחיסה (${sizeKB}KB). השתמש בתמונה קטנה יותר.`);
-        btn.disabled = false;
-        btn.textContent = 'שמור';
-        return;
+        const proceed = confirm(
+          `התמונה גדולה מדי לאחר דחיסה (${sizeKB}KB).\n\n` +
+          `לחץ אישור כדי לשמור ללא תמונה, או ביטול כדי לבחור תמונה קטנה יותר.`
+        );
+        if (!proceed) {
+          btn.disabled = false;
+          btn.textContent = 'שמור';
+          return;
+        }
+        imageUrl = '';  // save without image
       }
     }
 
