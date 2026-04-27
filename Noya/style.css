@@ -402,14 +402,16 @@ h1, h2, h3, .brand {
 /* ── Radio Groups ──────────────────────────────────────── */
 .radio-group {
   display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 8px;
   margin-top: 6px;
 }
 .radio-option {
   display: flex;
   align-items: center;
-  gap: 8px;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  gap: 10px;
   background: var(--white);
   border: 2px solid #ddd;
   border-radius: var(--radius-sm);
@@ -418,8 +420,6 @@ h1, h2, h3, .brand {
   font-size: 1rem;
   font-weight: 600;
   transition: border-color 0.15s, background 0.15s;
-  flex: 1;
-  min-width: 120px;
 }
 .radio-option:has(input:checked) {
   border-color: var(--purple);
@@ -427,8 +427,9 @@ h1, h2, h3, .brand {
 }
 .radio-option input[type="radio"] {
   accent-color: var(--purple);
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
 }
 
 /* ── Delivery fee note ─────────────────────────────────── */

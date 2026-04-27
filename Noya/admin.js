@@ -252,10 +252,11 @@ function renderOrders() {
       ? order.createdAt.toDate().toLocaleDateString('he-IL')
       : '';
     const itemsText    = order.items?.map(i => `${i.name} ×${i.qty}`).join(' | ') || '';
-    const paymentLabel  = order.payment === 'bit' ? '📱 ביט' : '💵 מזומן';
+    const paymentLabel  = order.payment === 'bit' ? '📱 ביט' : order.payment === 'cash' ? '💵 מזומן' : '';
     const deliveryLabel = order.delivery === 'delivery'
       ? `🚗 משלוח${order.address ? ' — ' + order.address : ''}${order.deliveryFee ? ' (₪' + order.deliveryFee + ')' : ''}`
-      : '🏠 איסוף עצמי';
+      : order.delivery === 'self' ? '🏠 איסוף עצמי' : '';
+    const metaLine = [paymentLabel, deliveryLabel].filter(Boolean).join(' &nbsp;|&nbsp; ');
 
     card.innerHTML = `
       <div class="order-card-header">
@@ -269,7 +270,7 @@ function renderOrders() {
         </div>
       </div>
       <div class="order-items">${itemsText}</div>
-      <div class="order-notes">${paymentLabel} &nbsp;|&nbsp; ${deliveryLabel}</div>
+      ${metaLine ? `<div class="order-notes">${metaLine}</div>` : ''}
       ${order.notes ? `<div class="order-notes">הערות: ${order.notes}</div>` : ''}
       <div class="order-actions">
         ${order.status === 'new'     ? `<button class="btn-status btn-mark-paid"    data-id="${order.id}">✓ סמן שולם</button>` : ''}
