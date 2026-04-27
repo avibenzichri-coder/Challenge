@@ -399,6 +399,72 @@ h1, h2, h3, .brand {
 .form-group textarea:focus { border-color: var(--purple); }
 .form-group textarea { resize: vertical; min-height: 80px; }
 
+/* ── Radio Groups ──────────────────────────────────────── */
+.radio-group {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--white);
+  border: 2px solid #ddd;
+  border-radius: var(--radius-sm);
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: border-color 0.15s, background 0.15s;
+  flex: 1;
+  min-width: 120px;
+}
+.radio-option:has(input:checked) {
+  border-color: var(--purple);
+  background: var(--gray-light);
+}
+.radio-option input[type="radio"] {
+  accent-color: var(--purple);
+  width: 16px;
+  height: 16px;
+}
+
+/* ── Delivery fee note ─────────────────────────────────── */
+.delivery-fee-note {
+  background: #fff3e0;
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--orange-dark);
+  margin-top: 6px;
+}
+
+/* ── Order Summary ─────────────────────────────────────── */
+.order-summary {
+  background: var(--gray-light);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1rem;
+}
+.summary-total {
+  font-size: 1.2rem;
+  font-weight: 700;
+  border-top: 2px solid var(--purple);
+  padding-top: 8px;
+  margin-top: 4px;
+  color: var(--purple);
+}
+
 /* ── Confirmation ──────────────────────────────────────── */
 .confirmation {
   text-align: center;

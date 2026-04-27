@@ -1,17 +1,18 @@
 import { db } from './firebase-config.js';
 import {
-  collection, getDocs, addDoc, query, orderBy, limit, startAfter, serverTimestamp
+  collection, getDocs, addDoc, query, orderBy, serverTimestamp
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 // ── Config ────────────────────────────────────────────────
 const WHATSAPP_NUMBERS = ['+972542403520'];  // add 2nd number here when ready
 const PAGE_SIZE = 24;
+const DELIVERY_FEES = { haifa: 15, outside: 20 };
 
 // ── State ─────────────────────────────────────────────────
-let allProducts   = [];   // full list loaded from Firestore
-let filteredProducts = []; // after search filter
-let cart          = {};   // { productId: { ...product, qty } }
-let currentPage   = 1;
+let allProducts      = [];
+let filteredProducts = [];
+let cart             = {};
+let currentPage      = 1;
 
 // ── Screens ───────────────────────────────────────────────
 function showScreen(id) {
@@ -168,42 +169,95 @@ function renderCart() {
   document.getElementById('cart-total').textContent = `₪${cartTotal()}`;
 }
 
+// ── Delivery & Order Summary ──────────────────────────────
+function getDeliveryFee() {
+  const deliveryMethod = document.querySelector('input[name="delivery"]:checked')?.value;
+  if (deliveryMethod !== 'delivery') return 0;
+  const area = document.querySelector('input[name="area"]:checked')?.value;
+  return DELIVERY_FEES[area] || 0;
+}
+
+function updateOrderSummary() {
+  const itemsTotal   = cartTotal();
+  const deliveryFee  = getDeliveryFee();
+  const grandTotal   = itemsTotal + deliveryFee;
+
+  document.getElementById('summary-items').textContent      = `₪${itemsTotal}`;
+  document.getElementById('summary-grand-total').textContent = `₪${grandTotal}`;
+
+  const deliveryRow = document.getElementById('summary-delivery-row');
+  if (deliveryFee > 0) {
+    document.getElementById('summary-delivery').textContent = `₪${deliveryFee}`;
+    deliveryRow.style.display = 'flex';
+  } else {
+    deliveryRow.style.display = 'none';
+  }
+}
+
+// Show/hide delivery details
+document.querySelectorAll('input[name="delivery"]').forEach(radio => {
+  radio.addEventListener('change', () => {
+    const details = document.getElementById('delivery-details');
+    const isDelivery = radio.value === 'delivery';
+    details.style.display = isDelivery ? 'block' : 'none';
+    document.getElementById('delivery-address').required = isDelivery;
+    updateOrderSummary();
+  });
+});
+
+// Update summary when area changes
+document.querySelectorAll('input[name="area"]').forEach(radio => {
+  radio.addEventListener('change', () => {
+    const fee = DELIVERY_FEES[radio.value];
+    document.getElementById('delivery-fee-note').textContent = `דמי משלוח: ₪${fee}`;
+    updateOrderSummary();
+  });
+});
+
 // ── Order Submission ──────────────────────────────────────
-async function submitOrder(name, phone, notes) {
+async function submitOrder({ name, phone, notes, payment, delivery, address, area }) {
   const items = Object.values(cart).map(i => ({
     productId: i.id,
     name:      i.name,
     price:     i.price,
     qty:       i.qty,
   }));
-  const total = cartTotal();
+  const itemsTotal  = cartTotal();
+  const deliveryFee = delivery === 'delivery' ? (DELIVERY_FEES[area] || 0) : 0;
+  const total       = itemsTotal + deliveryFee;
 
   await addDoc(collection(db, 'orders'), {
     customerName: name,
     phone,
     notes,
+    payment,
+    delivery,
+    address: address || '',
+    area:    area || '',
+    deliveryFee,
     items,
     total,
     status: 'new',
     createdAt: serverTimestamp(),
   });
 
-  return { name, phone, notes, items, total };
+  return { name, phone, notes, payment, delivery, address, area, deliveryFee, items, total };
 }
 
-function buildWhatsAppMessage({ name, phone, notes, items, total }) {
+function buildWhatsAppMessage({ name, phone, notes, payment, delivery, address, area, deliveryFee, items, total }) {
+  const paymentLabel  = payment === 'cash' ? 'מזומן' : 'ביט';
+  const deliveryLabel = delivery === 'self' ? 'איסוף עצמי' : 'משלוח';
   const lines = items.map(i => `• ${i.name} ×${i.qty} = ₪${i.price * i.qty}`).join('\n');
-  let msg = `הזמנה חדשה מ-${name}!\nטלפון: ${phone}\n\nפריטים:\n${lines}\n\nסה"כ: ₪${total}`;
-  if (notes) msg += `\n\nהערות: ${notes}`;
-  return encodeURIComponent(msg);
-}
 
-function openWhatsApp(orderData) {
-  const msg = buildWhatsAppMessage(orderData);
-  WHATSAPP_NUMBERS.forEach(num => {
-    const clean = num.replace(/\D/g, '');
-    window.open(`https://wa.me/${clean}?text=${msg}`, '_blank');
-  });
+  let msg = `הזמנה חדשה מ-${name}!\nטלפון: ${phone}\n\nפריטים:\n${lines}\n\nסכום פריטים: ₪${total - deliveryFee}`;
+  if (deliveryFee > 0) msg += `\nדמי משלוח (${area === 'haifa' ? 'חיפה' : 'מחוץ לחיפה'}): ₪${deliveryFee}`;
+  msg += `\n\nסה"כ לתשלום: ₪${total}`;
+  msg += `\nתשלום: ${paymentLabel}`;
+  msg += `\nאופן קבלה: ${deliveryLabel}`;
+  if (address) msg += `\nכתובת: ${address}`;
+  if (notes)   msg += `\n\nהערות: ${notes}`;
+
+  return encodeURIComponent(msg);
 }
 
 // ── Event Listeners ───────────────────────────────────────
@@ -235,6 +289,7 @@ document.getElementById('btn-to-order').addEventListener('click', () => {
     alert('העגלה ריקה! הוסף מוצרים לפני ההזמנה.');
     return;
   }
+  updateOrderSummary();
   showScreen('order');
 });
 
@@ -244,20 +299,34 @@ document.getElementById('btn-back-cart').addEventListener('click', () => showScr
 // Submit order
 document.getElementById('order-form').addEventListener('submit', async e => {
   e.preventDefault();
-  const btn  = document.getElementById('btn-submit-order');
-  const name  = document.getElementById('customer-name').value.trim();
-  const phone = document.getElementById('customer-phone').value.trim();
-  const notes = document.getElementById('customer-notes').value.trim();
+  const btn      = document.getElementById('btn-submit-order');
+  const name     = document.getElementById('customer-name').value.trim();
+  const phone    = document.getElementById('customer-phone').value.trim();
+  const notes    = document.getElementById('customer-notes').value.trim();
+  const payment  = document.querySelector('input[name="payment"]:checked')?.value;
+  const delivery = document.querySelector('input[name="delivery"]:checked')?.value;
+  const address  = document.getElementById('delivery-address').value.trim();
+  const area     = document.querySelector('input[name="area"]:checked')?.value;
+
+  if (!payment) { alert('נא לבחור אמצעי תשלום'); return; }
+  if (!delivery) { alert('נא לבחור אופן קבלה'); return; }
+  if (delivery === 'delivery' && !address) { alert('נא להזין כתובת למשלוח'); return; }
+  if (delivery === 'delivery' && !area) { alert('נא לבחור אזור משלוח'); return; }
 
   btn.disabled = true;
   btn.textContent = 'שולח...';
 
   try {
-    const orderData = await submitOrder(name, phone, notes);
+    const orderData = await submitOrder({ name, phone, notes, payment, delivery, address, area });
+
+    // Build WhatsApp URL before clearing cart (synchronous)
+    const msg = buildWhatsAppMessage(orderData);
+    const waUrl = `https://wa.me/${WHATSAPP_NUMBERS[0].replace(/\D/g, '')}?text=${msg}`;
+    document.getElementById('btn-whatsapp').href = waUrl;
+
     cart = {};
     updateCartBadge();
     showScreen('confirm');
-    openWhatsApp(orderData);
   } catch (err) {
     console.error('Order failed:', err);
     alert('שגיאה בשליחת ההזמנה. נסה שוב.');

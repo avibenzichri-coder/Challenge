@@ -57,6 +57,7 @@
       <h2>📋 פרטי ההזמנה</h2>
     </div>
     <form class="order-form" id="order-form">
+
       <div class="form-group">
         <label for="customer-name">שם פרטי *</label>
         <input type="text" id="customer-name" placeholder="הכנס את שמך" required>
@@ -65,10 +66,74 @@
         <label for="customer-phone">טלפון *</label>
         <input type="tel" id="customer-phone" placeholder="050-0000000" required>
       </div>
+
+      <!-- Payment method -->
+      <div class="form-group">
+        <label>אמצעי תשלום *</label>
+        <div class="radio-group">
+          <label class="radio-option">
+            <input type="radio" name="payment" value="cash" required> 💵 מזומן
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="payment" value="bit"> 📱 ביט
+          </label>
+        </div>
+      </div>
+
+      <!-- Delivery method -->
+      <div class="form-group">
+        <label>אופן קבלה *</label>
+        <div class="radio-group">
+          <label class="radio-option">
+            <input type="radio" name="delivery" value="self" required> 🏠 איסוף עצמי
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="delivery" value="delivery"> 🚗 משלוח
+          </label>
+        </div>
+      </div>
+
+      <!-- Delivery details (shown only when delivery selected) -->
+      <div id="delivery-details" style="display:none">
+        <div class="form-group">
+          <label for="delivery-address">כתובת למשלוח *</label>
+          <input type="text" id="delivery-address" placeholder="רחוב, מספר, עיר">
+        </div>
+        <div class="form-group">
+          <label>אזור משלוח *</label>
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" name="area" value="haifa"> 🏙️ חיפה (₪15)
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="area" value="outside"> 🗺️ מחוץ לחיפה (₪20)
+            </label>
+          </div>
+        </div>
+        <div class="delivery-fee-note" id="delivery-fee-note"></div>
+      </div>
+
       <div class="form-group">
         <label for="customer-notes">הערות</label>
         <textarea id="customer-notes" placeholder="כתוב כאן הערות אם יש..."></textarea>
       </div>
+
+      <!-- Order summary -->
+      <div class="order-summary">
+        <div class="summary-row">
+          <span>סכום פריטים:</span>
+          <span id="summary-items">₪0</span>
+        </div>
+        <div class="summary-row" id="summary-delivery-row" style="display:none">
+          <span>דמי משלוח:</span>
+          <span id="summary-delivery">₪0</span>
+        </div>
+        <div class="summary-row summary-total">
+          <span>סה"כ לתשלום:</span>
+          <span id="summary-grand-total">₪0</span>
+        </div>
+      </div>
+
       <button type="submit" class="btn-primary" id="btn-submit-order">שלח הזמנה 🎉</button>
     </form>
   </div>
@@ -78,8 +143,11 @@
     <div class="confirmation">
       <div class="big-emoji">🎉</div>
       <h2>ההזמנה נשלחה!</h2>
-      <p>תודה! נחזור אליך בקרוב כדי לתאם את האיסוף.</p>
-      <button class="btn-primary" id="btn-back-home">חזרה לחנות</button>
+      <p>תודה! נחזור אליך בקרוב כדי לתאם.</p>
+      <a id="btn-whatsapp" class="btn-primary" style="display:block;text-align:center;text-decoration:none;margin-bottom:10px" target="_blank">
+        💬 פתח WhatsApp
+      </a>
+      <button class="btn-secondary" id="btn-back-home">חזרה לחנות</button>
     </div>
   </div>
 
