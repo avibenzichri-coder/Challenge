@@ -56,7 +56,10 @@ document.getElementById('btn-login').addEventListener('click', async () => {
   }
 });
 
-document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
+document.getElementById('btn-logout').addEventListener('click', async () => {
+  await signOut(auth);
+  window.location.href = 'index.html';
+});
 
 // ── Tabs ──────────────────────────────────────────────────
 document.querySelectorAll('.admin-tab').forEach(tab => {
