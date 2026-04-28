@@ -8,6 +8,18 @@ const WHATSAPP_NUMBERS = ['+972542403520'];  // add 2nd number here when ready
 const PAGE_SIZE = 24;
 const DELIVERY_FEES = { haifa: 15, outside: 20 };
 
+// ── Helpers ───────────────────────────────────────────────
+function escapeHtml(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function formatPrice(n) {
+  return Number.isInteger(n) ? n : n.toFixed(2);
+}
+
 // ── State ─────────────────────────────────────────────────
 let allProducts      = [];
 let filteredProducts = [];
@@ -58,11 +70,11 @@ function renderProducts() {
     const card = document.createElement('div');
     card.className = 'product-card';
     card.innerHTML = `
-      <img src="${product.imageUrl || ''}" alt="${product.name}" loading="lazy"
+      <img src="${escapeHtml(product.imageUrl)}" alt="${escapeHtml(product.name)}" loading="lazy"
            onerror="this.style.background='#f3eeff';this.src=''">
       <div class="product-info">
-        <div class="product-name">${product.name}</div>
-        <div class="product-price">₪${product.price}</div>
+        <div class="product-name">${escapeHtml(product.name)}</div>
+        <div class="product-price">₪${formatPrice(product.price)}</div>
         <button class="btn-add ${inCart ? 'in-cart' : ''}" data-id="${product.id}">
           ${inCart ? '✓ בעגלה' : 'הוסף לעגלה'}
         </button>
@@ -151,11 +163,11 @@ function renderCart() {
     const el = document.createElement('div');
     el.className = 'cart-item';
     el.innerHTML = `
-      <img src="${item.imageUrl || ''}" alt="${item.name}"
+      <img src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.name)}"
            onerror="this.style.background='#f3eeff';this.src=''">
       <div class="cart-item-info">
-        <div class="cart-item-name">${item.name}</div>
-        <div class="cart-item-price">₪${item.price} ליחידה</div>
+        <div class="cart-item-name">${escapeHtml(item.name)}</div>
+        <div class="cart-item-price">₪${formatPrice(item.price)} ליחידה</div>
       </div>
       <div class="qty-control">
         <button class="qty-btn" data-id="${item.id}" data-delta="-1">−</button>
@@ -326,6 +338,8 @@ document.getElementById('order-form').addEventListener('submit', async e => {
 
     cart = {};
     updateCartBadge();
+    document.getElementById('order-form').reset();
+    document.getElementById('delivery-details').style.display = 'none';
     showScreen('confirm');
   } catch (err) {
     console.error('Order failed:', err);

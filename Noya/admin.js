@@ -7,15 +7,25 @@ import {
   signInWithEmailAndPassword, signOut, onAuthStateChanged
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
+// ── Helpers ───────────────────────────────────────────────
+function escapeHtml(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function formatPrice(n) {
+  return Number.isInteger(n) ? n : Number(n).toFixed(2);
+}
+
 // ── Image → Base64 ────────────────────────────────────────
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
-    // Resize to max 600px and compress before storing
+    const objectUrl = URL.createObjectURL(file);
     const img = new Image();
     img.onload = () => {
+      URL.revokeObjectURL(objectUrl);  // free memory
       const MAX = 600;
       let w = img.width, h = img.height;
       if (w > MAX || h > MAX) {
@@ -27,8 +37,8 @@ function fileToBase64(file) {
       canvas.getContext('2d').drawImage(img, 0, 0, w, h);
       resolve(canvas.toDataURL('image/jpeg', 0.8));
     };
-    img.onerror = reject;
-    img.src = URL.createObjectURL(file);
+    img.onerror = () => { URL.revokeObjectURL(objectUrl); reject(new Error('Image load failed')); };
+    img.src = objectUrl;
   });
 }
 
@@ -79,10 +89,16 @@ let products = [];
 let editingProductId = null;
 
 async function loadProducts() {
-  const q = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
-  const snap = await getDocs(q);
-  products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  renderProductsTable();
+  try {
+    const q = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
+    const snap = await getDocs(q);
+    products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderProductsTable();
+  } catch (err) {
+    console.error('Failed to load products:', err);
+    document.getElementById('products-table').innerHTML =
+      '<div class="empty-state"><div class="emoji">😕</div><p>שגיאה בטעינת המוצרים</p></div>';
+  }
 }
 
 function renderProductsTable() {
@@ -96,10 +112,10 @@ function renderProductsTable() {
     const row = document.createElement('div');
     row.className = 'product-row';
     row.innerHTML = `
-      <img src="${p.imageUrl || ''}" alt="${p.name}"
+      <img src="${escapeHtml(p.imageUrl)}" alt="${escapeHtml(p.name)}"
            onerror="this.style.background='#f3eeff';this.src=''">
-      <span class="row-name">${p.name}</span>
-      <span class="row-price">₪${p.price}</span>
+      <span class="row-name">${escapeHtml(p.name)}</span>
+      <span class="row-price">₪${formatPrice(p.price)}</span>
       <button class="toggle-available ${p.available ? 'available' : ''}" data-id="${p.id}" data-available="${p.available}">
         ${p.available ? '✓ זמין' : '✗ מוסתר'}
       </button>
@@ -127,7 +143,9 @@ document.getElementById('products-table').addEventListener('click', async e => {
   }
 
   if (e.target.classList.contains('btn-delete')) {
-    if (!confirm(`למחוק את "${products.find(p => p.id === id)?.name}"?`)) return;
+    const product = products.find(p => p.id === id);
+    if (!product) return;
+    if (!confirm(`למחוק את "${product.name}"?`)) return;
     await deleteDoc(doc(db, 'products', id));
     await loadProducts();
   }
@@ -177,8 +195,8 @@ document.getElementById('btn-modal-save').addEventListener('click', async () => 
   const available = document.getElementById('prod-available').checked;
   const file      = document.getElementById('prod-image').files[0];
 
-  if (!name || isNaN(price)) {
-    alert('נא למלא שם ומחיר');
+  if (!name || isNaN(price) || price < 0) {
+    alert('נא למלא שם ומחיר תקין (גדול או שווה לאפס)');
     return;
   }
 
@@ -264,17 +282,17 @@ function renderOrders() {
     card.innerHTML = `
       <div class="order-card-header">
         <div>
-          <div class="order-customer">${order.customerName}</div>
-          <div class="order-phone">${order.phone} ${date ? '· ' + date : ''}</div>
+          <div class="order-customer">${escapeHtml(order.customerName)}</div>
+          <div class="order-phone">${escapeHtml(order.phone)}${date ? ' · ' + date : ''}</div>
         </div>
         <div style="display:flex;align-items:center;gap:10px">
-          <span class="order-total">₪${order.total}</span>
+          <span class="order-total">₪${formatPrice(order.total)}</span>
           <span class="status-badge ${STATUS_CLASS[order.status]}">${STATUS_LABEL[order.status]}</span>
         </div>
       </div>
-      <div class="order-items">${itemsText}</div>
+      <div class="order-items">${escapeHtml(itemsText)}</div>
       ${metaLine ? `<div class="order-notes">${metaLine}</div>` : ''}
-      ${order.notes ? `<div class="order-notes">הערות: ${order.notes}</div>` : ''}
+      ${order.notes ? `<div class="order-notes">הערות: ${escapeHtml(order.notes)}</div>` : ''}
       <div class="order-actions">
         ${order.status === 'new'     ? `<button class="btn-status btn-mark-paid"    data-id="${order.id}">✓ סמן שולם</button>` : ''}
         ${order.status !== 'shipped' ? `<button class="btn-status btn-mark-shipped" data-id="${order.id}">📦 סמן נשלח</button>` : ''}
